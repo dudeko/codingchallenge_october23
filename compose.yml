@@ -1,0 +1,37 @@
+services:
+  database:
+    container_name: "searchhistory_database"
+    image: "postgres:16.0-alpine"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: searchhistory_database
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - 15432:5432
+  server:
+    container_name: "node-server"
+    image: "node:20.8.0-slim"
+    user: "node"
+    working_dir: /home/node/server
+    volumes:
+      - ./node-server/:/home/node/server
+    depends_on:
+      - database
+    ports:
+      - 3001:3001
+    command: bash -c "npm i && node index.js"
+  app:
+    container_name: "react-app"
+    image: "node:20.8.0-slim"
+    user: "node"
+    working_dir: /home/react/app
+    volumes:
+      - ./react-app/:/home/react/app
+    depends_on:
+      - server
+    ports:
+      - 5173:5173
+    command: bash -c "npm i && npm run dev"

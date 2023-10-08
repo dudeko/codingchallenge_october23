@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-  host: 'localhost',
+  host: 'database',
   database: 'searchhistory_database',
   password: 'test123',
-  port: 15432,
+  port: 5432,
 });
 
 const getAllSearchHistory = () => {
@@ -13,7 +13,7 @@ const getAllSearchHistory = () => {
       if (error) {
         reject(error)
       }
-      resolve(results.rows);
+      resolve(results?.rows);
     })
   })
 }
